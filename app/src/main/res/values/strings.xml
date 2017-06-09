@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Money Calc MD</string>
+    <string name="app_title">Курс молдавского лея на %1$s</string>
+    <string name="currency">Валюта</string>
+    <string name="buy">Покупка</string>
+    <string name="sell">Продажа</string>
+    <string name="eur">EUR</string>
+    <string name="usd">USD</string>
+    <string name="rub">RUB</string>
+    <string name="uah">UAH</string>
+    <string name="ron">RON</string>
+</resources>
