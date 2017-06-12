@@ -1,12 +1,10 @@
 package com.podimov.moneycalcmd;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,10 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,15 +27,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private String json_url = "https://point.md/finansy/rates/";
-
-    private Spinner spinner;
-
-    private TextView app_title;
 
     private TextView eur_buy;
     private TextView eur_sell;
@@ -86,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         String currentDate = sdf.format(new Date());
-        app_title = (TextView) findViewById(R.id.app_title);
+        TextView app_title = (TextView) findViewById(R.id.app_title);
         app_title.setText(getString(R.string.app_title, currentDate));
 
         new ParseTask().execute();
@@ -101,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
+                String json_url = "https://point.md/finansy/rates/";
                 URL url = new URL(json_url);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -160,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
 
         eur_buy = (TextView) findViewById(R.id.eur_buy);
         eur_sell = (TextView) findViewById(R.id.eur_sell);
@@ -226,13 +215,7 @@ public class MainActivity extends AppCompatActivity {
         edit_eur.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void afterTextChanged(Editable s) {
                 try {
                     Float eur_calc = Float.parseFloat(edit_eur.getText().toString());
                     Float eur = Float.parseFloat(eur_buy_sum);
@@ -250,21 +233,20 @@ public class MainActivity extends AppCompatActivity {
                     edit_rub.setText(String.format("%.02f", rub_calc));
                     edit_uah.setText(String.format("%.02f", uah_calc));
                     edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {
-                }
+                } catch (NumberFormatException e) {}
             }
-        });
-
-        edit_usd.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        edit_usd.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 try {
                     Float usd_calc = Float.parseFloat(edit_usd.getText().toString());
                     Float eur = Float.parseFloat(eur_buy_sum);
@@ -282,21 +264,20 @@ public class MainActivity extends AppCompatActivity {
                     edit_rub.setText(String.format("%.02f", rub_calc));
                     edit_uah.setText(String.format("%.02f", uah_calc));
                     edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {
-                }
+                } catch (NumberFormatException e) {}
             }
-        });
-
-        edit_rub.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        edit_rub.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 try {
                     Float rub_calc = Float.parseFloat(edit_rub.getText().toString());
                     Float eur = Float.parseFloat(eur_buy_sum);
@@ -314,21 +295,20 @@ public class MainActivity extends AppCompatActivity {
                     edit_usd.setText(String.format("%.02f", usd_calc));
                     edit_uah.setText(String.format("%.02f", uah_calc));
                     edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {
-                }
+                } catch (NumberFormatException e) {}
             }
-        });
-
-        edit_uah.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        edit_uah.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 try {
                     Float uah_calc = Float.parseFloat(edit_uah.getText().toString());
                     Float eur = Float.parseFloat(eur_buy_sum);
@@ -346,21 +326,20 @@ public class MainActivity extends AppCompatActivity {
                     edit_usd.setText(String.format("%.02f", usd_calc));
                     edit_rub.setText(String.format("%.02f", rub_calc));
                     edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {
-                }
+                } catch (NumberFormatException e) {}
             }
-        });
-
-        edit_ron.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {}
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        edit_ron.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 try {
                     Float ron_calc = Float.parseFloat(edit_ron.getText().toString());
                     Float eur = Float.parseFloat(eur_buy_sum);
@@ -378,9 +357,14 @@ public class MainActivity extends AppCompatActivity {
                     edit_usd.setText(String.format("%.02f", usd_calc));
                     edit_rub.setText(String.format("%.02f", rub_calc));
                     edit_uah.setText(String.format("%.02f", uah_calc));
-                } catch (NumberFormatException e) {
-                }
+                } catch (NumberFormatException e) {}
             }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
 
     }
