@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -109,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                urlConnection.disconnect();
             }
             return resultJson;
         }
@@ -222,176 +225,128 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        edit_eur.addTextChangedListener(new TextWatcher() {
+        edit_eur.addTextChangedListener(new MyTextWatcher("EUR"));
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    Float eur_calc = Float.parseFloat(edit_eur.getText().toString());
-                    Float eur = Float.parseFloat(eur_buy_sum);
-                    Float usd = Float.parseFloat(usd_buy_sum);
-                    Float rub = Float.parseFloat(rub_buy_sum);
-                    Float uah = Float.parseFloat(uah_buy_sum);
-                    Float ron = Float.parseFloat(ron_buy_sum);
+        edit_usd.addTextChangedListener(new MyTextWatcher("USD"));
 
-                    Float usd_calc = (eur_calc*eur/usd);
-                    Float rub_calc = (eur_calc*eur/rub);
-                    Float uah_calc = (eur_calc*eur/uah);
-                    Float ron_calc = (eur_calc*eur/ron);
+        edit_rub.addTextChangedListener(new MyTextWatcher("RUB"));
 
-                    edit_usd.setText(String.format("%.02f", usd_calc));
-                    edit_rub.setText(String.format("%.02f", rub_calc));
-                    edit_uah.setText(String.format("%.02f", uah_calc));
-                    edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {}
-            }
+        edit_uah.addTextChangedListener(new MyTextWatcher("UAH"));
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-        edit_usd.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    Float usd_calc = Float.parseFloat(edit_usd.getText().toString());
-                    Float eur = Float.parseFloat(eur_buy_sum);
-                    Float usd = Float.parseFloat(usd_buy_sum);
-                    Float rub = Float.parseFloat(rub_buy_sum);
-                    Float uah = Float.parseFloat(uah_buy_sum);
-                    Float ron = Float.parseFloat(ron_buy_sum);
-
-                    Float eur_calc = (usd_calc*usd/eur);
-                    Float rub_calc = (usd_calc*usd/rub);
-                    Float uah_calc = (usd_calc*usd/uah);
-                    Float ron_calc = (usd_calc*usd/ron);
-
-                    edit_eur.setText(String.format("%.02f", eur_calc));
-                    edit_rub.setText(String.format("%.02f", rub_calc));
-                    edit_uah.setText(String.format("%.02f", uah_calc));
-                    edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {}
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-        edit_rub.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    Float rub_calc = Float.parseFloat(edit_rub.getText().toString());
-                    Float eur = Float.parseFloat(eur_buy_sum);
-                    Float usd = Float.parseFloat(usd_buy_sum);
-                    Float rub = Float.parseFloat(rub_buy_sum);
-                    Float uah = Float.parseFloat(uah_buy_sum);
-                    Float ron = Float.parseFloat(ron_buy_sum);
-
-                    Float eur_calc = (rub_calc*rub/eur);
-                    Float usd_calc = (rub_calc*rub/usd);
-                    Float uah_calc = (rub_calc*rub/uah);
-                    Float ron_calc = (rub_calc*rub/ron);
-
-                    edit_eur.setText(String.format("%.02f", eur_calc));
-                    edit_usd.setText(String.format("%.02f", usd_calc));
-                    edit_uah.setText(String.format("%.02f", uah_calc));
-                    edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {}
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-        edit_uah.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    Float uah_calc = Float.parseFloat(edit_uah.getText().toString());
-                    Float eur = Float.parseFloat(eur_buy_sum);
-                    Float usd = Float.parseFloat(usd_buy_sum);
-                    Float rub = Float.parseFloat(rub_buy_sum);
-                    Float uah = Float.parseFloat(uah_buy_sum);
-                    Float ron = Float.parseFloat(ron_buy_sum);
-
-                    Float eur_calc = (uah_calc*uah/eur);
-                    Float usd_calc = (uah_calc*uah/usd);
-                    Float rub_calc = (uah_calc*uah/rub);
-                    Float ron_calc = (uah_calc*uah/ron);
-
-                    edit_eur.setText(String.format("%.02f", eur_calc));
-                    edit_usd.setText(String.format("%.02f", usd_calc));
-                    edit_rub.setText(String.format("%.02f", rub_calc));
-                    edit_ron.setText(String.format("%.02f", ron_calc));
-                } catch (NumberFormatException e) {}
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-        edit_ron.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    Float ron_calc = Float.parseFloat(edit_ron.getText().toString());
-                    Float eur = Float.parseFloat(eur_buy_sum);
-                    Float usd = Float.parseFloat(usd_buy_sum);
-                    Float rub = Float.parseFloat(rub_buy_sum);
-                    Float uah = Float.parseFloat(uah_buy_sum);
-                    Float ron = Float.parseFloat(ron_buy_sum);
-
-                    Float eur_calc = (ron_calc*ron/eur);
-                    Float usd_calc = (ron_calc*ron/usd);
-                    Float rub_calc = (ron_calc*ron/rub);
-                    Float uah_calc = (ron_calc*ron/uah);
-
-                    edit_eur.setText(String.format("%.02f", eur_calc));
-                    edit_usd.setText(String.format("%.02f", usd_calc));
-                    edit_rub.setText(String.format("%.02f", rub_calc));
-                    edit_uah.setText(String.format("%.02f", uah_calc));
-                } catch (NumberFormatException e) {}
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
+        edit_ron.addTextChangedListener(new MyTextWatcher("RON"));
 
     }
 
-    private class Bank {
-        private String bank_name;
+    private class MyTextWatcher implements TextWatcher {
 
-        public Bank() {
-        }
+        private final String currentCurrency;
 
-        public Bank(String bank_name) {
-            this.bank_name = bank_name;
+        public MyTextWatcher(String currentCurrency) {
+            this.currentCurrency = currentCurrency;
         }
 
         @Override
-        public String toString() {
-            return bank_name;
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            Float currency_calc;
+            Float currency_rate;
+
+            Float eur_calc;
+            Float usd_calc;
+            Float rub_calc;
+            Float uah_calc;
+            Float ron_calc;
+
+            Float eur = Float.parseFloat(eur_buy_sum);
+            Float usd = Float.parseFloat(usd_buy_sum);
+            Float rub = Float.parseFloat(rub_buy_sum);
+            Float uah = Float.parseFloat(uah_buy_sum);
+            Float ron = Float.parseFloat(ron_buy_sum);
+
+            try {
+                switch(this.currentCurrency) {
+                    case "EUR":
+                        currency_calc = Float.parseFloat(edit_eur.getText().toString());
+                        currency_rate = Float.parseFloat(eur_buy_sum);
+
+                        usd_calc = (currency_calc*currency_rate/usd);
+                        rub_calc = (currency_calc*currency_rate/rub);
+                        uah_calc = (currency_calc*currency_rate/uah);
+                        ron_calc = (currency_calc*currency_rate/ron);
+
+                        edit_usd.setText(String.format("%.02f", usd_calc));
+                        edit_rub.setText(String.format("%.02f", rub_calc));
+                        edit_uah.setText(String.format("%.02f", uah_calc));
+                        edit_ron.setText(String.format("%.02f", ron_calc));
+                        break;
+                    case "USD":
+                        currency_calc = Float.parseFloat(edit_usd.getText().toString());
+                        currency_rate = Float.parseFloat(usd_buy_sum);
+
+                        eur_calc = (currency_calc*currency_rate/eur);
+                        rub_calc = (currency_calc*currency_rate/rub);
+                        uah_calc = (currency_calc*currency_rate/uah);
+                        ron_calc = (currency_calc*currency_rate/ron);
+
+                        edit_eur.setText(String.format("%.02f", eur_calc));
+                        edit_rub.setText(String.format("%.02f", rub_calc));
+                        edit_uah.setText(String.format("%.02f", uah_calc));
+                        edit_ron.setText(String.format("%.02f", ron_calc));
+                        break;
+                    case "RUB":
+                        currency_calc = Float.parseFloat(edit_rub.getText().toString());
+                        currency_rate = Float.parseFloat(rub_buy_sum);
+
+                        eur_calc = (currency_calc*currency_rate/eur);
+                        usd_calc = (currency_calc*currency_rate/usd);
+                        uah_calc = (currency_calc*currency_rate/uah);
+                        ron_calc = (currency_calc*currency_rate/ron);
+
+                        edit_eur.setText(String.format("%.02f", eur_calc));
+                        edit_usd.setText(String.format("%.02f", usd_calc));
+                        edit_uah.setText(String.format("%.02f", uah_calc));
+                        edit_ron.setText(String.format("%.02f", ron_calc));
+                        break;
+                    case "UAH":
+                        currency_calc = Float.parseFloat(edit_uah.getText().toString());
+                        currency_rate = Float.parseFloat(uah_buy_sum);
+
+                        eur_calc = (currency_calc*currency_rate/eur);
+                        usd_calc = (currency_calc*currency_rate/usd);
+                        rub_calc = (currency_calc*currency_rate/rub);
+                        ron_calc = (currency_calc*currency_rate/ron);
+
+                        edit_eur.setText(String.format("%.02f", eur_calc));
+                        edit_usd.setText(String.format("%.02f", usd_calc));
+                        edit_rub.setText(String.format("%.02f", rub_calc));
+                        edit_ron.setText(String.format("%.02f", ron_calc));
+                        break;
+                    case "RON":
+                        currency_calc = Float.parseFloat(edit_ron.getText().toString());
+                        currency_rate = Float.parseFloat(ron_buy_sum);
+
+                        eur_calc = (currency_calc*currency_rate/eur);
+                        usd_calc = (currency_calc*currency_rate/usd);
+                        rub_calc = (currency_calc*currency_rate/rub);
+                        uah_calc = (currency_calc*currency_rate/uah);
+
+                        edit_eur.setText(String.format("%.02f", eur_calc));
+                        edit_usd.setText(String.format("%.02f", usd_calc));
+                        edit_rub.setText(String.format("%.02f", rub_calc));
+                        edit_uah.setText(String.format("%.02f", uah_calc));
+                        break;
+                }
+            } catch (NumberFormatException e) {}
         }
     }
 }
