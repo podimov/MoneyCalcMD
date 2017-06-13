@@ -89,15 +89,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             try {
-                String json_url = "https://point.md/finansy/rates/";
-                URL url = new URL(json_url);
+                URL url = new URL("https://point.md/finansy/rates/");
 
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
 
                 reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -118,6 +117,13 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String strJson) {
             super.onPostExecute(strJson);
 
+            String[] whiteList = {
+                    "Banca Nationala a Moldovei",
+                    "Moldindconbank",
+                    "Victoriabank",
+                    "Moldova Agroindbank"
+            };
+
             try {
                 JSONObject dataJsonObj = new JSONObject(strJson);
                 JSONObject organizations = dataJsonObj.getJSONObject("organizations");
@@ -129,18 +135,22 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject ratesArr = new JSONObject(organizations.optString(key));
                     JSONObject rates = ratesArr.getJSONObject("rates");
                     String bankName = ratesArr.getString("name");
-                    banks.add(new Bank(bankName));
 
-                    Iterator<String> iteratorRates = rates.keys();
-                    while (iteratorRates.hasNext()) {
-                        String currency = iteratorRates.next();
-                        JSONObject rateArr = new JSONObject(rates.optString(currency));
-                        String sell = rateArr.getString("sell");
-                        String buy = rateArr.getString("buy");
-                        HashMap.put("Bank_" + i + "_" + currency, new ArrayList<String>(Arrays.asList(sell, buy)));
+                    if (Arrays.asList(whiteList).contains(bankName)) {
+                        banks.add(new Bank(bankName));
+
+                        Iterator<String> iteratorRates = rates.keys();
+                        while (iteratorRates.hasNext()) {
+                            String currency = iteratorRates.next();
+                            JSONObject rateArr = new JSONObject(rates.optString(currency));
+                            String sell = rateArr.getString("sell");
+                            String buy = rateArr.getString("buy");
+                            HashMap.put("Bank_" + i + "_" + currency, new ArrayList<String>(Arrays.asList(sell, buy)));
+                        }
+                        i++;
                     }
-                    i++;
                 }
+
                 initializeUI();
             } catch (JSONException e) {
                 e.printStackTrace();
