@@ -27,6 +27,12 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Spinner spinner;
+
+    ArrayList<String> banks = new ArrayList<String>();
+
+    ArrayAdapter<String> adapter;
+
     private TextView eur_buy;
     private TextView eur_sell;
 
@@ -71,13 +77,22 @@ public class MainActivity extends AppCompatActivity {
         TextView app_title = (TextView) findViewById(R.id.app_title);
         app_title.setText(getString(R.string.app_title, currentDate));
 
+        initializeUI();
+
         try {
             new Api().get().getData().enqueue(new Callback<BankModel>() {
                 @Override
                 public void onResponse(Call<BankModel> call, Response<BankModel> response) {
                     if(response.isSuccessful()) {
                         bankModel = response.body();
-                        initializeUI();
+
+                        Organizations organizations = bankModel.getOrganizations();
+
+                        for (Integer i = 0; i <= 5; i++) {
+                            banks.add(organizations.getBank(i).getName());
+                        }
+
+                        adapter.notifyDataSetChanged();
                     }
                 }
 
@@ -92,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner = (Spinner) findViewById(R.id.spinner);
 
         eur_buy = (TextView) findViewById(R.id.eur_buy);
         eur_sell = (TextView) findViewById(R.id.eur_sell);
@@ -115,18 +130,7 @@ public class MainActivity extends AppCompatActivity {
         edit_uah = (EditText) findViewById(R.id.edit_uah);
         edit_ron = (EditText) findViewById(R.id.edit_ron);
 
-        ArrayList<String> banks = new ArrayList<String>();
-        Organizations organizations = bankModel.getOrganizations();
-
-        banks.add(organizations.getBank(0).getName());
-        banks.add(organizations.getBank(1).getName());
-        banks.add(organizations.getBank(2).getName());
-        banks.add(organizations.getBank(3).getName());
-        banks.add(organizations.getBank(4).getName());
-        banks.add(organizations.getBank(5).getName());
-
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
@@ -160,7 +164,9 @@ public class MainActivity extends AppCompatActivity {
                     ron_sell.setText(ron_sell_sum);
 
                     edit_eur.setText("100");
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    Log.e("onSelectError", e.getMessage());
+                }
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
