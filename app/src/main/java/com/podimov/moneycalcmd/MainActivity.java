@@ -198,26 +198,26 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            Float currency_calc;
-            Float currency_rate;
+            Double currency_calc;
+            Double currency_rate;
 
-            Float eur_calc;
-            Float usd_calc;
-            Float rub_calc;
-            Float uah_calc;
-            Float ron_calc;
+            Double eur_calc;
+            Double usd_calc;
+            Double rub_calc;
+            Double uah_calc;
+            Double ron_calc;
 
-            Float eur = Float.parseFloat(eur_buy_sum);
-            Float usd = Float.parseFloat(usd_buy_sum);
-            Float rub = Float.parseFloat(rub_buy_sum);
-            Float uah = Float.parseFloat(uah_buy_sum);
-            Float ron = Float.parseFloat(ron_buy_sum);
+            Double eur = Double.parseDouble(eur_buy_sum);
+            Double usd = Double.parseDouble(usd_buy_sum);
+            Double rub = Double.parseDouble(rub_buy_sum);
+            Double uah = Double.parseDouble(uah_buy_sum);
+            Double ron = Double.parseDouble(ron_buy_sum);
 
             try {
                 switch(this.currentCurrency) {
                     case "EUR":
-                        currency_calc = Float.parseFloat(edit_eur.getText().toString());
-                        currency_rate = Float.parseFloat(eur_buy_sum);
+                        currency_calc = Double.parseDouble(edit_eur.getText().toString());
+                        currency_rate = Double.parseDouble(eur_buy_sum);
 
                         usd_calc = (currency_calc*currency_rate/usd);
                         rub_calc = (currency_calc*currency_rate/rub);
@@ -230,8 +230,8 @@ public class MainActivity extends AppCompatActivity {
                         edit_ron.setText(String.format("%.02f", ron_calc));
                         break;
                     case "USD":
-                        currency_calc = Float.parseFloat(edit_usd.getText().toString());
-                        currency_rate = Float.parseFloat(usd_buy_sum);
+                        currency_calc = Double.parseDouble(edit_usd.getText().toString());
+                        currency_rate = Double.parseDouble(usd_buy_sum);
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         rub_calc = (currency_calc*currency_rate/rub);
@@ -244,8 +244,8 @@ public class MainActivity extends AppCompatActivity {
                         edit_ron.setText(String.format("%.02f", ron_calc));
                         break;
                     case "RUB":
-                        currency_calc = Float.parseFloat(edit_rub.getText().toString());
-                        currency_rate = Float.parseFloat(rub_buy_sum);
+                        currency_calc = Double.parseDouble(edit_rub.getText().toString());
+                        currency_rate = Double.parseDouble(rub_buy_sum);
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         usd_calc = (currency_calc*currency_rate/usd);
@@ -258,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
                         edit_ron.setText(String.format("%.02f", ron_calc));
                         break;
                     case "UAH":
-                        currency_calc = Float.parseFloat(edit_uah.getText().toString());
-                        currency_rate = Float.parseFloat(uah_buy_sum);
+                        currency_calc = Double.parseDouble(edit_uah.getText().toString());
+                        currency_rate = Double.parseDouble(uah_buy_sum);
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         usd_calc = (currency_calc*currency_rate/usd);
@@ -272,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
                         edit_ron.setText(String.format("%.02f", ron_calc));
                         break;
                     case "RON":
-                        currency_calc = Float.parseFloat(edit_ron.getText().toString());
-                        currency_rate = Float.parseFloat(ron_buy_sum);
+                        currency_calc = Double.parseDouble(edit_ron.getText().toString());
+                        currency_rate = Double.parseDouble(ron_buy_sum);
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         usd_calc = (currency_calc*currency_rate/usd);
