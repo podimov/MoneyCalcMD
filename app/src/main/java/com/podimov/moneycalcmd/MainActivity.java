@@ -1,11 +1,13 @@
 package com.podimov.moneycalcmd;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         edit_ron = (EditText) findViewById(R.id.edit_ron);
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
-        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+        //adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
 
@@ -167,6 +169,10 @@ public class MainActivity extends AppCompatActivity {
                     ron_sell.setText(ron_sell_sum);
 
                     edit_eur.setText("100");
+                    edit_eur.requestFocus();
+                    edit_eur.selectAll();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edit_eur, InputMethodManager.SHOW_IMPLICIT);
                 } catch (Exception e) {
                     Log.e("onSelectError", e.getMessage());
                 }
@@ -202,97 +208,85 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            Double currency_calc;
-            Double currency_rate;
+            TextView currentTextView = null;
+            if (this.currentCurrency == "EUR") {
+                currentTextView = edit_eur;
+            } else if (this.currentCurrency == "USD") {
+                currentTextView = edit_usd;
+            } else if (this.currentCurrency == "RUB") {
+                currentTextView = edit_rub;
+            } else if (this.currentCurrency == "UAH") {
+                currentTextView = edit_uah;
+            } else if (this.currentCurrency == "RON") {
+                currentTextView = edit_ron;
+            }
 
-            Double eur_calc;
-            Double usd_calc;
-            Double rub_calc;
-            Double uah_calc;
-            Double ron_calc;
+            if (currentTextView.isFocused()) {
+                Double currency_rate = null;
 
-            Rates rates = bankModel.getOrganizations().getBank(selectedBank).getRates();
+                Double eur_calc;
+                Double usd_calc;
+                Double rub_calc;
+                Double uah_calc;
+                Double ron_calc;
 
-            Double eur = rates.getEUR().getBuy();
-            Double usd = rates.getUSD().getBuy();
-            Double rub = rates.getRUB().getBuy();
-            Double uah = rates.getUAH().getBuy();
-            Double ron = rates.getRON().getBuy();
+                Rates rates = bankModel.getOrganizations().getBank(selectedBank).getRates();
 
-            try {
-                switch(this.currentCurrency) {
-                    case "EUR":
-                        currency_calc = Double.parseDouble(edit_eur.getText().toString());
-                        currency_rate = eur;
+                Double eur = rates.getEUR().getBuy();
+                Double usd = rates.getUSD().getBuy();
+                Double rub = rates.getRUB().getBuy();
+                Double uah = rates.getUAH().getBuy();
+                Double ron = rates.getRON().getBuy();
 
-                        usd_calc = (currency_calc*currency_rate/usd);
-                        rub_calc = (currency_calc*currency_rate/rub);
-                        uah_calc = (currency_calc*currency_rate/uah);
-                        ron_calc = (currency_calc*currency_rate/ron);
+                try {
+                    Double currency_calc = Double.parseDouble(currentTextView.getText().toString());
 
-                        edit_usd.setText(String.format("%.02f", usd_calc));
-                        edit_rub.setText(String.format("%.02f", rub_calc));
-                        edit_uah.setText(String.format("%.02f", uah_calc));
-                        edit_ron.setText(String.format("%.02f", ron_calc));
-                        break;
-                    case "USD":
-                        currency_calc = Double.parseDouble(edit_usd.getText().toString());
-                        currency_rate = usd;
+                    switch (this.currentCurrency) {
+                        case "EUR":
+                            currency_rate = eur;
+                            break;
+                        case "USD":
+                            currency_rate = usd;
+                            break;
+                        case "RUB":
+                            currency_rate = rub;
+                            break;
+                        case "UAH":
+                            currency_rate = uah;
+                            break;
+                        case "RON":
+                            currency_rate = ron;
+                            break;
+                    }
 
-                        eur_calc = (currency_calc*currency_rate/eur);
-                        rub_calc = (currency_calc*currency_rate/rub);
-                        uah_calc = (currency_calc*currency_rate/uah);
-                        ron_calc = (currency_calc*currency_rate/ron);
-
+                    if (this.currentCurrency != "EUR") {
+                        eur_calc = (currency_calc * currency_rate / eur);
                         edit_eur.setText(String.format("%.02f", eur_calc));
-                        edit_rub.setText(String.format("%.02f", rub_calc));
-                        edit_uah.setText(String.format("%.02f", uah_calc));
-                        edit_ron.setText(String.format("%.02f", ron_calc));
-                        break;
-                    case "RUB":
-                        currency_calc = Double.parseDouble(edit_rub.getText().toString());
-                        currency_rate = rub;
+                    }
 
-                        eur_calc = (currency_calc*currency_rate/eur);
-                        usd_calc = (currency_calc*currency_rate/usd);
-                        uah_calc = (currency_calc*currency_rate/uah);
-                        ron_calc = (currency_calc*currency_rate/ron);
-
-                        edit_eur.setText(String.format("%.02f", eur_calc));
+                    if (this.currentCurrency != "USD") {
+                        usd_calc = (currency_calc * currency_rate / usd);
                         edit_usd.setText(String.format("%.02f", usd_calc));
-                        edit_uah.setText(String.format("%.02f", uah_calc));
-                        edit_ron.setText(String.format("%.02f", ron_calc));
-                        break;
-                    case "UAH":
-                        currency_calc = Double.parseDouble(edit_uah.getText().toString());
-                        currency_rate = uah;
+                    }
 
-                        eur_calc = (currency_calc*currency_rate/eur);
-                        usd_calc = (currency_calc*currency_rate/usd);
-                        rub_calc = (currency_calc*currency_rate/rub);
-                        ron_calc = (currency_calc*currency_rate/ron);
-
-                        edit_eur.setText(String.format("%.02f", eur_calc));
-                        edit_usd.setText(String.format("%.02f", usd_calc));
+                    if (this.currentCurrency != "RUB") {
+                        rub_calc = (currency_calc * currency_rate / rub);
                         edit_rub.setText(String.format("%.02f", rub_calc));
-                        edit_ron.setText(String.format("%.02f", ron_calc));
-                        break;
-                    case "RON":
-                        currency_calc = Double.parseDouble(edit_ron.getText().toString());
-                        currency_rate = ron;
+                    }
 
-                        eur_calc = (currency_calc*currency_rate/eur);
-                        usd_calc = (currency_calc*currency_rate/usd);
-                        rub_calc = (currency_calc*currency_rate/rub);
-                        uah_calc = (currency_calc*currency_rate/uah);
-
-                        edit_eur.setText(String.format("%.02f", eur_calc));
-                        edit_usd.setText(String.format("%.02f", usd_calc));
-                        edit_rub.setText(String.format("%.02f", rub_calc));
+                    if (this.currentCurrency != "UAH") {
+                        uah_calc = (currency_calc * currency_rate / uah);
                         edit_uah.setText(String.format("%.02f", uah_calc));
-                        break;
+                    }
+
+                    if (this.currentCurrency != "RON") {
+                        ron_calc = (currency_calc * currency_rate / ron);
+                        edit_ron.setText(String.format("%.02f", ron_calc));
+                    }
+
+                } catch (NumberFormatException e) {
                 }
-            } catch (NumberFormatException e) {}
+            }
         }
     }
 }

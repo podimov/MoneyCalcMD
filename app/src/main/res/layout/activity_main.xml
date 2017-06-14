@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="@drawable/bg"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/bg"
+        android:scaleType="centerCrop"/>
 
     <LinearLayout
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_width="0px"
-        android:layout_height="0px"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <TextView
         android:id="@+id/app_title"
@@ -19,24 +22,24 @@
         android:textSize="18sp"
         android:textAlignment="center"
         android:textStyle="bold"
-        android:layout_marginTop="10pt"/>
+        android:layout_marginTop="10dp"/>
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout1"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#A681C784"
         android:padding="5dp"
-        android:layout_marginTop="3pt">
+        android:layout_marginTop="3dp">
 
         <TextView
             android:id="@+id/textView5"
@@ -80,11 +83,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayoutEur"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#A681C784"
-        android:padding="5dp"
-        android:layout_marginTop="3pt">
+        android:paddingLeft="5dp"
+        android:layout_marginTop="3dp">
 
         <TextView
             android:id="@+id/eur_title"
@@ -127,11 +130,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayoutUsd"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#A681C784"
-        android:padding="5dp"
-        android:layout_marginTop="3pt">
+        android:paddingLeft="5dp"
+        android:layout_marginTop="3dp">
 
         <TextView
             android:id="@+id/usd_title"
@@ -174,11 +177,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayoutRub"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#A681C784"
-        android:padding="5dp"
-        android:layout_marginTop="3pt">
+        android:paddingLeft="5dp"
+        android:layout_marginTop="3dp">
 
         <TextView
             android:id="@+id/rub_title"
@@ -221,11 +224,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayoutUah"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#A681C784"
-        android:padding="5dp"
-        android:layout_marginTop="3pt">
+        android:paddingLeft="5dp"
+        android:layout_marginTop="3dp">
 
         <TextView
             android:id="@+id/uah_title"
@@ -268,11 +271,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayoutRon"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="#A681C784"
-        android:padding="5dp"
-        android:layout_marginTop="3pt">
+        android:paddingLeft="5dp"
+        android:layout_marginTop="3dp">
 
         <TextView
             android:id="@+id/ron_title"
@@ -310,5 +313,5 @@
             android:width="20dp"/>
 
     </LinearLayout>
-
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>
