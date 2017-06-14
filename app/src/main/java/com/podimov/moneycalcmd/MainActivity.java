@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
         edit_ron = (EditText) findViewById(R.id.edit_ron);
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
-        //adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
 
