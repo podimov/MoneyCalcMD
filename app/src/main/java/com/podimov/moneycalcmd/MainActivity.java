@@ -1,8 +1,7 @@
 package com.podimov.moneycalcmd;
 
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,22 +12,19 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.podimov.moneycalcmd.model.Bank;
+import com.podimov.moneycalcmd.model.BankModel;
+import com.podimov.moneycalcmd.model.Organizations;
+import com.podimov.moneycalcmd.model.Rates;
+import com.podimov.moneycalcmd.net.Api;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,9 +60,7 @@ public class MainActivity extends AppCompatActivity {
     String ron_buy_sum  = "";
     String ron_sell_sum = "";
 
-    Map<String, List<String>> HashMap = new HashMap<String, List<String>>();
-
-    ArrayList<Bank> banks = new ArrayList<>();
+    BankModel bankModel = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,86 +72,25 @@ public class MainActivity extends AppCompatActivity {
         TextView app_title = (TextView) findViewById(R.id.app_title);
         app_title.setText(getString(R.string.app_title, currentDate));
 
-        new ParseTask().execute();
-    }
-
-    private class ParseTask extends AsyncTask<Void, Void, String> {
-
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-        String resultJson = "";
-
-        @Override
-        protected String doInBackground(Void... params) {
-            try {
-                URL url = new URL("https://point.md/finansy/rates/");
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuilder buffer = new StringBuilder();
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
-
-                resultJson = buffer.toString();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                urlConnection.disconnect();
-            }
-            return resultJson;
-        }
-
-        @Override
-        protected void onPostExecute(String strJson) {
-            super.onPostExecute(strJson);
-
-            String[] whiteList = {
-                    "Banca Nationala a Moldovei",
-                    "Moldindconbank",
-                    "Victoriabank",
-                    "Moldova Agroindbank"
-            };
-
-            try {
-                JSONObject dataJsonObj = new JSONObject(strJson);
-                JSONObject organizations = dataJsonObj.getJSONObject("organizations");
-
-                Integer i = 0;
-                Iterator<String> iterator = organizations.keys();
-                while (iterator.hasNext()) {
-                    String key = iterator.next();
-                    JSONObject ratesArr = new JSONObject(organizations.optString(key));
-                    JSONObject rates = ratesArr.getJSONObject("rates");
-                    String bankName = ratesArr.getString("name");
-
-                    if (Arrays.asList(whiteList).contains(bankName)) {
-                        banks.add(new Bank(bankName));
-
-                        Iterator<String> iteratorRates = rates.keys();
-                        while (iteratorRates.hasNext()) {
-                            String currency = iteratorRates.next();
-                            JSONObject rateArr = new JSONObject(rates.optString(currency));
-                            String sell = rateArr.getString("sell");
-                            String buy = rateArr.getString("buy");
-                            HashMap.put("Bank_" + i + "_" + currency, new ArrayList<String>(Arrays.asList(sell, buy)));
-                        }
-                        i++;
+        try {
+            new Api().get().getData().enqueue(new Callback<BankModel>() {
+                @Override
+                public void onResponse(Call<BankModel> call, Response<BankModel> response) {
+                    if(response.isSuccessful()) {
+                        try {
+                            bankModel = response.body();
+                        } catch (Exception e) {}
+                        initializeUI();
                     }
                 }
 
-                initializeUI();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                @Override
+                public void onFailure(Call<BankModel> call, Throwable t) {
+                    Log.e("ERROR", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.e("ERROR", e.toString());
         }
     }
 
@@ -185,8 +118,18 @@ public class MainActivity extends AppCompatActivity {
         edit_uah = (EditText) findViewById(R.id.edit_uah);
         edit_ron = (EditText) findViewById(R.id.edit_ron);
 
-        ArrayAdapter<Bank> adapter =
-                new ArrayAdapter<Bank>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
+        ArrayList<String> banks = new ArrayList<String>();
+        Organizations organizations = bankModel.getOrganizations();
+
+        banks.add(organizations.getBank(0).getName());
+        banks.add(organizations.getBank(1).getName());
+        banks.add(organizations.getBank(2).getName());
+        banks.add(organizations.getBank(3).getName());
+        banks.add(organizations.getBank(4).getName());
+        banks.add(organizations.getBank(5).getName());
+
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
@@ -195,16 +138,18 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 try {
-                    eur_buy_sum  = HashMap.get("Bank_" + selectedItemPosition + "_EUR").get(1);
-                    eur_sell_sum = HashMap.get("Bank_" + selectedItemPosition + "_EUR").get(0);
-                    usd_buy_sum  = HashMap.get("Bank_" + selectedItemPosition + "_USD").get(1);
-                    usd_sell_sum = HashMap.get("Bank_" + selectedItemPosition + "_USD").get(0);
-                    rub_buy_sum  = HashMap.get("Bank_" + selectedItemPosition + "_RUB").get(1);
-                    rub_sell_sum = HashMap.get("Bank_" + selectedItemPosition + "_RUB").get(0);
-                    uah_buy_sum  = HashMap.get("Bank_" + selectedItemPosition + "_UAH").get(1);
-                    uah_sell_sum = HashMap.get("Bank_" + selectedItemPosition + "_UAH").get(0);
-                    ron_buy_sum  = HashMap.get("Bank_" + selectedItemPosition + "_RON").get(1);
-                    ron_sell_sum = HashMap.get("Bank_" + selectedItemPosition + "_RON").get(0);
+                    Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
+
+                    eur_buy_sum  = rates.getEUR().getBuy().toString();
+                    eur_sell_sum = rates.getEUR().getSell().toString();
+                    usd_buy_sum  = rates.getUSD().getBuy().toString();
+                    usd_sell_sum = rates.getUSD().getSell().toString();
+                    rub_buy_sum  = rates.getRUB().getBuy().toString();
+                    rub_sell_sum = rates.getRUB().getSell().toString();
+                    uah_buy_sum  = rates.getUAH().getBuy().toString();
+                    uah_sell_sum = rates.getUAH().getSell().toString();
+                    ron_buy_sum  = rates.getRON().getBuy().toString();
+                    ron_sell_sum = rates.getRON().getSell().toString();
 
                     eur_buy.setText(eur_buy_sum);
                     eur_sell.setText(eur_sell_sum);
@@ -246,18 +191,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
         @Override
         public void afterTextChanged(Editable s) {
-
             Float currency_calc;
             Float currency_rate;
 
