@@ -143,39 +143,37 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 selectedBank = selectedItemPosition;
-                try {
-                    Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
 
-                    eur_buy_sum  = rates.getEUR().getBuy().toString();
-                    eur_sell_sum = rates.getEUR().getSell().toString();
-                    usd_buy_sum  = rates.getUSD().getBuy().toString();
-                    usd_sell_sum = rates.getUSD().getSell().toString();
-                    rub_buy_sum  = rates.getRUB().getBuy().toString();
-                    rub_sell_sum = rates.getRUB().getSell().toString();
-                    uah_buy_sum  = rates.getUAH().getBuy().toString();
-                    uah_sell_sum = rates.getUAH().getSell().toString();
-                    ron_buy_sum  = rates.getRON().getBuy().toString();
-                    ron_sell_sum = rates.getRON().getSell().toString();
+                Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
 
-                    eur_buy.setText(eur_buy_sum);
-                    eur_sell.setText(eur_sell_sum);
-                    usd_buy.setText(usd_buy_sum);
-                    usd_sell.setText(usd_sell_sum);
-                    rub_buy.setText(rub_buy_sum);
-                    rub_sell.setText(rub_sell_sum);
-                    uah_buy.setText(uah_buy_sum);
-                    uah_sell.setText(uah_sell_sum);
-                    ron_buy.setText(ron_buy_sum);
-                    ron_sell.setText(ron_sell_sum);
+                eur_buy_sum  = rates.getEUR().getBuy().toString();
+                eur_sell_sum = rates.getEUR().getSell().toString();
+                usd_buy_sum  = rates.getUSD().getBuy().toString();
+                usd_sell_sum = rates.getUSD().getSell().toString();
+                rub_buy_sum  = rates.getRUB().getBuy().toString();
+                rub_sell_sum = rates.getRUB().getSell().toString();
+                uah_buy_sum  = rates.getUAH().getBuy().toString();
+                uah_sell_sum = rates.getUAH().getSell().toString();
+                ron_buy_sum  = rates.getRON().getBuy().toString();
+                ron_sell_sum = rates.getRON().getSell().toString();
 
-                    edit_eur.setText("100");
-                    edit_eur.requestFocus();
-                    edit_eur.selectAll();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(edit_eur, InputMethodManager.SHOW_IMPLICIT);
-                } catch (Exception e) {
-                    Log.e("onSelectError", e.getMessage());
-                }
+                eur_buy.setText(eur_buy_sum);
+                eur_sell.setText(eur_sell_sum);
+                usd_buy.setText(usd_buy_sum);
+                usd_sell.setText(usd_sell_sum);
+                rub_buy.setText(rub_buy_sum);
+                rub_sell.setText(rub_sell_sum);
+                uah_buy.setText(uah_buy_sum);
+                uah_sell.setText(uah_sell_sum);
+                ron_buy.setText(ron_buy_sum);
+                ron_sell.setText(ron_sell_sum);
+
+                edit_eur.setText("100");
+                edit_eur.requestFocus();
+                edit_eur.selectAll();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(edit_eur, InputMethodManager.SHOW_IMPLICIT);
+
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
@@ -208,56 +206,46 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
+            Double currency_rate = null;
+
+            Double eur_calc;
+            Double usd_calc;
+            Double rub_calc;
+            Double uah_calc;
+            Double ron_calc;
+
+            Rates rates = bankModel.getOrganizations().getBank(selectedBank).getRates();
+
+            Double eur = rates.getEUR().getBuy();
+            Double usd = rates.getUSD().getBuy();
+            Double rub = rates.getRUB().getBuy();
+            Double uah = rates.getUAH().getBuy();
+            Double ron = rates.getRON().getBuy();
+
             TextView currentTextView = null;
+
             if (this.currentCurrency == "EUR") {
                 currentTextView = edit_eur;
+                currency_rate = eur;
             } else if (this.currentCurrency == "USD") {
                 currentTextView = edit_usd;
+                currency_rate = usd;
             } else if (this.currentCurrency == "RUB") {
                 currentTextView = edit_rub;
+                currency_rate = rub;
             } else if (this.currentCurrency == "UAH") {
                 currentTextView = edit_uah;
+                currency_rate = uah;
             } else if (this.currentCurrency == "RON") {
                 currentTextView = edit_ron;
+                currency_rate = ron;
             }
 
             if (currentTextView.isFocused()) {
-                Double currency_rate = null;
+                String currentField = currentTextView.getText().toString();
 
-                Double eur_calc;
-                Double usd_calc;
-                Double rub_calc;
-                Double uah_calc;
-                Double ron_calc;
-
-                Rates rates = bankModel.getOrganizations().getBank(selectedBank).getRates();
-
-                Double eur = rates.getEUR().getBuy();
-                Double usd = rates.getUSD().getBuy();
-                Double rub = rates.getRUB().getBuy();
-                Double uah = rates.getUAH().getBuy();
-                Double ron = rates.getRON().getBuy();
-
-                try {
-                    Double currency_calc = Double.parseDouble(currentTextView.getText().toString());
-
-                    switch (this.currentCurrency) {
-                        case "EUR":
-                            currency_rate = eur;
-                            break;
-                        case "USD":
-                            currency_rate = usd;
-                            break;
-                        case "RUB":
-                            currency_rate = rub;
-                            break;
-                        case "UAH":
-                            currency_rate = uah;
-                            break;
-                        case "RON":
-                            currency_rate = ron;
-                            break;
-                    }
+                if (currentField.length() > 0) {
+                    Double currency_calc = Double.parseDouble(currentField);
 
                     if (this.currentCurrency != "EUR") {
                         eur_calc = (currency_calc * currency_rate / eur);
@@ -283,8 +271,6 @@ public class MainActivity extends AppCompatActivity {
                         ron_calc = (currency_calc * currency_rate / ron);
                         edit_ron.setText(String.format("%.02f", ron_calc));
                     }
-
-                } catch (NumberFormatException e) {
                 }
             }
         }
