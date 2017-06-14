@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner spinner;
 
-    ArrayList<String> banks = new ArrayList<String>();
+    private ArrayList<String> banks = new ArrayList<String>();
 
-    ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> adapter;
 
     private TextView eur_buy;
     private TextView eur_sell;
@@ -54,18 +54,20 @@ public class MainActivity extends AppCompatActivity {
     private EditText edit_uah;
     private EditText edit_ron;
 
-    String eur_buy_sum  = "";
-    String eur_sell_sum = "";
-    String usd_buy_sum  = "";
-    String usd_sell_sum = "";
-    String rub_buy_sum  = "";
-    String rub_sell_sum = "";
-    String uah_buy_sum  = "";
-    String uah_sell_sum = "";
-    String ron_buy_sum  = "";
-    String ron_sell_sum = "";
+    private String eur_buy_sum  = "";
+    private String eur_sell_sum = "";
+    private String usd_buy_sum  = "";
+    private String usd_sell_sum = "";
+    private String rub_buy_sum  = "";
+    private String rub_sell_sum = "";
+    private String uah_buy_sum  = "";
+    private String uah_sell_sum = "";
+    private String ron_buy_sum  = "";
+    private String ron_sell_sum = "";
 
-    BankModel bankModel = null;
+    private BankModel bankModel = null;
+
+    private Integer selectedBank;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
+                selectedBank = selectedItemPosition;
                 try {
                     Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
 
@@ -208,17 +211,19 @@ public class MainActivity extends AppCompatActivity {
             Double uah_calc;
             Double ron_calc;
 
-            Double eur = Double.parseDouble(eur_buy_sum);
-            Double usd = Double.parseDouble(usd_buy_sum);
-            Double rub = Double.parseDouble(rub_buy_sum);
-            Double uah = Double.parseDouble(uah_buy_sum);
-            Double ron = Double.parseDouble(ron_buy_sum);
+            Rates rates = bankModel.getOrganizations().getBank(selectedBank).getRates();
+
+            Double eur = rates.getEUR().getBuy();
+            Double usd = rates.getUSD().getBuy();
+            Double rub = rates.getRUB().getBuy();
+            Double uah = rates.getUAH().getBuy();
+            Double ron = rates.getRON().getBuy();
 
             try {
                 switch(this.currentCurrency) {
                     case "EUR":
                         currency_calc = Double.parseDouble(edit_eur.getText().toString());
-                        currency_rate = Double.parseDouble(eur_buy_sum);
+                        currency_rate = eur;
 
                         usd_calc = (currency_calc*currency_rate/usd);
                         rub_calc = (currency_calc*currency_rate/rub);
@@ -232,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "USD":
                         currency_calc = Double.parseDouble(edit_usd.getText().toString());
-                        currency_rate = Double.parseDouble(usd_buy_sum);
+                        currency_rate = usd;
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         rub_calc = (currency_calc*currency_rate/rub);
@@ -246,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "RUB":
                         currency_calc = Double.parseDouble(edit_rub.getText().toString());
-                        currency_rate = Double.parseDouble(rub_buy_sum);
+                        currency_rate = rub;
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         usd_calc = (currency_calc*currency_rate/usd);
@@ -260,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "UAH":
                         currency_calc = Double.parseDouble(edit_uah.getText().toString());
-                        currency_rate = Double.parseDouble(uah_buy_sum);
+                        currency_rate = uah;
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         usd_calc = (currency_calc*currency_rate/usd);
@@ -274,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "RON":
                         currency_calc = Double.parseDouble(edit_ron.getText().toString());
-                        currency_rate = Double.parseDouble(ron_buy_sum);
+                        currency_rate = ron;
 
                         eur_calc = (currency_calc*currency_rate/eur);
                         usd_calc = (currency_calc*currency_rate/usd);
