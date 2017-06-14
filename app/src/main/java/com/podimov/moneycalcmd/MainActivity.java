@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.podimov.moneycalcmd.model.Bank;
 import com.podimov.moneycalcmd.model.BankModel;
 import com.podimov.moneycalcmd.model.Organizations;
 import com.podimov.moneycalcmd.model.Rates;
@@ -77,9 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<BankModel> call, Response<BankModel> response) {
                     if(response.isSuccessful()) {
-                        try {
-                            bankModel = response.body();
-                        } catch (Exception e) {}
+                        bankModel = response.body();
                         initializeUI();
                     }
                 }
@@ -163,9 +160,7 @@ public class MainActivity extends AppCompatActivity {
                     ron_sell.setText(ron_sell_sum);
 
                     edit_eur.setText("100");
-                } catch (Exception e) {
-
-                }
+                } catch (Exception e) {}
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
