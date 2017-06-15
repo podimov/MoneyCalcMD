@@ -1,13 +1,13 @@
 package com.podimov.moneycalcmd;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.podimov.moneycalcmd.model.BankModel;
 import com.podimov.moneycalcmd.model.EUR;
 import com.podimov.moneycalcmd.model.GBP;
@@ -30,6 +31,7 @@ import com.podimov.moneycalcmd.net.Api;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -79,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Integer selectedBank;
 
+    SharedPreferences mPrefs;
+    Gson gson = new Gson();
+
+    String ratesDate = null;
+    String currentDate = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        String currentDate = sdf.format(new Date());
+        currentDate = sdf.format(new Date());
         TextView app_title = (TextView) findViewById(R.id.app_title);
         app_title.setText(getString(R.string.app_title, currentDate));
 
@@ -99,30 +107,56 @@ public class MainActivity extends AppCompatActivity {
 
         initializeUI();
 
+        mPrefs = getPreferences(MODE_PRIVATE);
+        String json = mPrefs.getString("bankModel", "");
+        bankModel = gson.fromJson(json, BankModel.class);
+
+        if (bankModel != null) {
+            ratesDate = sdf.format(new Date(bankModel.getDate() * 1000L));
+        }
+
         try {
-            new Api().get().getData().enqueue(new Callback<BankModel>() {
-                @Override
-                public void onResponse(Call<BankModel> call, Response<BankModel> response) {
-                    if(response.isSuccessful()) {
-                        bankModel = response.body();
+            if (bankModel == null || !Objects.equals(ratesDate, currentDate)) {
+                Log.e("Rates date", "from "+ratesDate);
+                Log.e("Current date", "from "+currentDate);
+                Log.e("SOURCE", "Rates from network");
+                new Api().get().getData().enqueue(new Callback<BankModel>() {
+                    @Override
+                    public void onResponse(Call<BankModel> call, Response<BankModel> response) {
+                        if (response.isSuccessful()) {
+                            bankModel = response.body();
 
-                        Organizations organizations = bankModel.getOrganizations();
+                            SharedPreferences.Editor prefsEditor = mPrefs.edit();
 
-                        try {
+                            prefsEditor.putString("bankModel", gson.toJson(bankModel));
+                            prefsEditor.apply();
+
+                            Organizations organizations = bankModel.getOrganizations();
+
                             for (Integer i = 0; i <= 9; i++) {
                                 banks.add(organizations.getBank(i).getName());
                             }
-                        } catch (NullPointerException e) {}
 
-                        adapter.notifyDataSetChanged();
+                            adapter.notifyDataSetChanged();
+                        }
                     }
+
+                    @Override
+                    public void onFailure(Call<BankModel> call, Throwable t) {
+                        Log.e("ERROR", t.getMessage());
+                    }
+                });
+            } else {
+                Log.e("SOURCE", "Local rates");
+                Organizations organizations = bankModel.getOrganizations();
+
+                for (Integer i = 0; i <= 9; i++) {
+                    banks.add(organizations.getBank(i).getName());
                 }
 
-                @Override
-                public void onFailure(Call<BankModel> call, Throwable t) {
-                    Log.e("ERROR", t.getMessage());
-                }
-            });
+                adapter.notifyDataSetChanged();
+            }
+
         } catch (Exception e) {
             Log.e("ERROR", e.toString());
         }
@@ -286,22 +320,22 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView currentTextView = null;
 
-                if (this.currentCurrency == "EUR") {
+                if (Objects.equals(this.currentCurrency, "EUR")) {
                     currentTextView = edit_eur;
                     currency_rate = eur;
-                } else if (this.currentCurrency == "USD") {
+                } else if (Objects.equals(this.currentCurrency, "USD")) {
                     currentTextView = edit_usd;
                     currency_rate = usd;
-                } else if (this.currentCurrency == "RUB") {
+                } else if (Objects.equals(this.currentCurrency, "RUB")) {
                     currentTextView = edit_rub;
                     currency_rate = rub;
-                } else if (this.currentCurrency == "UAH") {
+                } else if (Objects.equals(this.currentCurrency, "UAH")) {
                     currentTextView = edit_uah;
                     currency_rate = uah;
-                } else if (this.currentCurrency == "RON") {
+                } else if (Objects.equals(this.currentCurrency, "RON")) {
                     currentTextView = edit_ron;
                     currency_rate = ron;
-                } else if (this.currentCurrency == "GBP") {
+                } else if (Objects.equals(this.currentCurrency, "GBP")) {
                     currentTextView = edit_gbp;
                     currency_rate = gbp;
                 }
@@ -312,22 +346,22 @@ public class MainActivity extends AppCompatActivity {
                     if (currentField.length() > 0) {
                         Double currency_calc = Double.parseDouble(currentField);
 
-                        if (this.currentCurrency != "EUR" && eur != 0) {
+                        if (!Objects.equals(this.currentCurrency, "EUR") && eur != 0) {
                             eur_calc = (currency_calc * currency_rate / eur);
                             edit_eur.setText(String.format("%.02f", eur_calc));
                         }
 
-                        if (this.currentCurrency != "USD" && usd != 0) {
+                        if (!Objects.equals(this.currentCurrency, "USD") && usd != 0) {
                             usd_calc = (currency_calc * currency_rate / usd);
                             edit_usd.setText(String.format("%.02f", usd_calc));
                         }
 
-                        if (this.currentCurrency != "RUB" && rub != 0) {
+                        if (!Objects.equals(this.currentCurrency, "RUB") && rub != 0) {
                             rub_calc = (currency_calc * currency_rate / rub);
                             edit_rub.setText(String.format("%.02f", rub_calc));
                         }
 
-                        if (this.currentCurrency != "UAH" && uah != 0) {
+                        if (!Objects.equals(this.currentCurrency, "UAH") && uah != 0) {
                             uah_calc = (currency_calc * currency_rate / uah);
                             edit_uah.setText(String.format("%.02f", uah_calc));
                         }
@@ -337,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                             edit_ron.setText(String.format("%.02f", ron_calc));
                         }
 
-                        if (this.currentCurrency != "GBP" && gbp != 0) {
+                        if (!Objects.equals(this.currentCurrency, "GBP") && gbp != 0) {
                             gbp_calc = (currency_calc * currency_rate / gbp);
                             edit_gbp.setText(String.format("%.02f", gbp_calc));
                         }
