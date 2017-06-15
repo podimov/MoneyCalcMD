@@ -313,5 +313,52 @@
             android:width="20dp"/>
 
     </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayoutGbp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#A681C784"
+            android:paddingLeft="5dp"
+            android:layout_marginTop="3dp">
+
+            <TextView
+                android:id="@+id/gbp_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gbp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:width="10dp"/>
+
+            <EditText
+                android:id="@+id/edit_gbp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:layout_marginRight="20dp"
+                android:width="20dp"
+                android:selectAllOnFocus="true"/>
+
+            <TextView
+                android:id="@+id/gbp_buy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:width="20dp"/>
+
+            <TextView
+                android:id="@+id/gbp_sell"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:width="20dp"/>
+
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

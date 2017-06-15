@@ -29,6 +29,22 @@ public class Organizations {
     @Expose
     private Bank bank_5;
 
+    @SerializedName("5902E3AF514A45AA82EC746AC5A197CC")
+    @Expose
+    private Bank bank_6;
+
+    @SerializedName("E0ECFC45A888438EAAB4BE95F789A511")
+    @Expose
+    private Bank bank_7;
+
+    @SerializedName("16D645E461824404AD996692E0F86C8A")
+    @Expose
+    private Bank bank_8;
+
+    @SerializedName("BA4492EBD85843CE90636ECCC5D7A4EF")
+    @Expose
+    private Bank bank_9;
+
     public Bank getBank(Integer pos) {
 
         Bank bank = null;
@@ -50,6 +66,18 @@ public class Organizations {
                 break;
             case 5:
                 bank = bank_5;
+                break;
+            case 6:
+                bank = bank_6;
+                break;
+            case 7:
+                bank = bank_7;
+                break;
+            case 8:
+                bank = bank_8;
+                break;
+            case 9:
+                bank = bank_9;
                 break;
 
         }

@@ -10,4 +10,5 @@
     <string name="uah">UAH</string>
     <string name="ron">RON</string>
     <string name="exchange">Обмен</string>
+    <string name="gbp">GBP</string>
 </resources>

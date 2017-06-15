@@ -7,16 +7,24 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.podimov.moneycalcmd.model.BankModel;
+import com.podimov.moneycalcmd.model.EUR;
+import com.podimov.moneycalcmd.model.GBP;
 import com.podimov.moneycalcmd.model.Organizations;
+import com.podimov.moneycalcmd.model.RON;
+import com.podimov.moneycalcmd.model.RUB;
 import com.podimov.moneycalcmd.model.Rates;
+import com.podimov.moneycalcmd.model.UAH;
+import com.podimov.moneycalcmd.model.USD;
 import com.podimov.moneycalcmd.net.Api;
 
 import java.text.SimpleDateFormat;
@@ -50,22 +58,22 @@ public class MainActivity extends AppCompatActivity {
     private TextView ron_buy;
     private TextView ron_sell;
 
+    private TextView gbp_buy;
+    private TextView gbp_sell;
+
     private EditText edit_eur;
     private EditText edit_usd;
     private EditText edit_rub;
     private EditText edit_uah;
     private EditText edit_ron;
+    private EditText edit_gbp;
 
-    private String eur_buy_sum  = "";
-    private String eur_sell_sum = "";
-    private String usd_buy_sum  = "";
-    private String usd_sell_sum = "";
-    private String rub_buy_sum  = "";
-    private String rub_sell_sum = "";
-    private String uah_buy_sum  = "";
-    private String uah_sell_sum = "";
-    private String ron_buy_sum  = "";
-    private String ron_sell_sum = "";
+    private LinearLayout linearLayoutEur;
+    private LinearLayout linearLayoutUsd;
+    private LinearLayout linearLayoutRub;
+    private LinearLayout linearLayoutUah;
+    private LinearLayout linearLayoutRon;
+    private LinearLayout linearLayoutGbp;
 
     private BankModel bankModel = null;
 
@@ -74,12 +82,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         String currentDate = sdf.format(new Date());
         TextView app_title = (TextView) findViewById(R.id.app_title);
         app_title.setText(getString(R.string.app_title, currentDate));
+
+        linearLayoutEur = (LinearLayout) findViewById(R.id.linearLayoutEur);
+        linearLayoutUsd = (LinearLayout) findViewById(R.id.linearLayoutUsd);
+        linearLayoutRub = (LinearLayout) findViewById(R.id.linearLayoutRub);
+        linearLayoutUah = (LinearLayout) findViewById(R.id.linearLayoutUah);
+        linearLayoutRon = (LinearLayout) findViewById(R.id.linearLayoutRon);
+        linearLayoutGbp = (LinearLayout) findViewById(R.id.linearLayoutGbp);
 
         initializeUI();
 
@@ -92,9 +108,11 @@ public class MainActivity extends AppCompatActivity {
 
                         Organizations organizations = bankModel.getOrganizations();
 
-                        for (Integer i = 0; i <= 5; i++) {
-                            banks.add(organizations.getBank(i).getName());
-                        }
+                        try {
+                            for (Integer i = 0; i <= 9; i++) {
+                                banks.add(organizations.getBank(i).getName());
+                            }
+                        } catch (NullPointerException e) {}
 
                         adapter.notifyDataSetChanged();
                     }
@@ -128,11 +146,15 @@ public class MainActivity extends AppCompatActivity {
         ron_buy = (TextView) findViewById(R.id.ron_buy);
         ron_sell = (TextView) findViewById(R.id.ron_sell);
 
+        gbp_buy = (TextView) findViewById(R.id.gbp_buy);
+        gbp_sell = (TextView) findViewById(R.id.gbp_sell);
+
         edit_eur = (EditText) findViewById(R.id.edit_eur);
         edit_usd = (EditText) findViewById(R.id.edit_usd);
         edit_rub = (EditText) findViewById(R.id.edit_rub);
         edit_uah = (EditText) findViewById(R.id.edit_uah);
         edit_ron = (EditText) findViewById(R.id.edit_ron);
+        edit_gbp = (EditText) findViewById(R.id.edit_gbp);
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_dropdown_item, banks);
 
@@ -145,27 +167,56 @@ public class MainActivity extends AppCompatActivity {
 
                 Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
 
-                eur_buy_sum  = rates.getEUR().getBuy().toString();
-                eur_sell_sum = rates.getEUR().getSell().toString();
-                usd_buy_sum  = rates.getUSD().getBuy().toString();
-                usd_sell_sum = rates.getUSD().getSell().toString();
-                rub_buy_sum  = rates.getRUB().getBuy().toString();
-                rub_sell_sum = rates.getRUB().getSell().toString();
-                uah_buy_sum  = rates.getUAH().getBuy().toString();
-                uah_sell_sum = rates.getUAH().getSell().toString();
-                ron_buy_sum  = rates.getRON().getBuy().toString();
-                ron_sell_sum = rates.getRON().getSell().toString();
+                if (rates.getEUR() == null) {
+                    linearLayoutEur.setVisibility(LinearLayout.GONE);
+                } else {
+                    linearLayoutEur.setVisibility(LinearLayout.VISIBLE);
+                }
 
-                eur_buy.setText(eur_buy_sum);
-                eur_sell.setText(eur_sell_sum);
-                usd_buy.setText(usd_buy_sum);
-                usd_sell.setText(usd_sell_sum);
-                rub_buy.setText(rub_buy_sum);
-                rub_sell.setText(rub_sell_sum);
-                uah_buy.setText(uah_buy_sum);
-                uah_sell.setText(uah_sell_sum);
-                ron_buy.setText(ron_buy_sum);
-                ron_sell.setText(ron_sell_sum);
+                if (rates.getUSD() == null) {
+                    linearLayoutUsd.setVisibility(LinearLayout.GONE);
+                } else {
+                    linearLayoutUsd.setVisibility(LinearLayout.VISIBLE);
+                }
+
+                if (rates.getRUB() == null) {
+                    linearLayoutRub.setVisibility(LinearLayout.GONE);
+                } else {
+                    linearLayoutRub.setVisibility(LinearLayout.VISIBLE);
+                }
+
+                if (rates.getUAH() == null) {
+                    linearLayoutUah.setVisibility(LinearLayout.GONE);
+                } else {
+                    linearLayoutUah.setVisibility(LinearLayout.VISIBLE);
+                }
+
+                if (rates.getRON() == null) {
+                    linearLayoutRon.setVisibility(LinearLayout.GONE);
+                } else {
+                    linearLayoutRon.setVisibility(LinearLayout.VISIBLE);
+                }
+
+                if (rates.getGBP() == null) {
+                    linearLayoutGbp.setVisibility(LinearLayout.GONE);
+                } else {
+                    linearLayoutGbp.setVisibility(LinearLayout.VISIBLE);
+                }
+
+                try {
+                    eur_buy.setText(String.format("%.02f", rates.getEUR().getBuy()));
+                    eur_sell.setText(String.format("%.02f", rates.getEUR().getSell()));
+                    usd_buy.setText(String.format("%.02f", rates.getUSD().getBuy()));
+                    usd_sell.setText(String.format("%.02f", rates.getUSD().getSell()));
+                    rub_buy.setText(String.format("%.02f", rates.getRUB().getBuy()));
+                    rub_sell.setText(String.format("%.02f", rates.getRUB().getSell()));
+                    uah_buy.setText(String.format("%.02f", rates.getUAH().getBuy()));
+                    uah_sell.setText(String.format("%.02f", rates.getUAH().getSell()));
+                    ron_buy.setText(String.format("%.02f", rates.getRON().getBuy()));
+                    ron_sell.setText(String.format("%.02f", rates.getRON().getSell()));
+                    gbp_buy.setText(String.format("%.02f", rates.getGBP().getBuy()));
+                    gbp_sell.setText(String.format("%.02f", rates.getGBP().getSell()));
+                } catch (Exception e) {}
 
                 edit_eur.setText("100");
                 edit_eur.requestFocus();
@@ -186,6 +237,8 @@ public class MainActivity extends AppCompatActivity {
         edit_uah.addTextChangedListener(new MyTextWatcher("UAH"));
 
         edit_ron.addTextChangedListener(new MyTextWatcher("RON"));
+
+        edit_gbp.addTextChangedListener(new MyTextWatcher("GBP"));
 
     }
 
@@ -212,65 +265,88 @@ public class MainActivity extends AppCompatActivity {
             Double rub_calc;
             Double uah_calc;
             Double ron_calc;
+            Double gbp_calc;
 
             Rates rates = bankModel.getOrganizations().getBank(selectedBank).getRates();
 
-            Double eur = rates.getEUR().getBuy();
-            Double usd = rates.getUSD().getBuy();
-            Double rub = rates.getRUB().getBuy();
-            Double uah = rates.getUAH().getBuy();
-            Double ron = rates.getRON().getBuy();
+            try {
+                EUR mEur = rates.getEUR();
+                USD mUsd = rates.getUSD();
+                RUB mRub = rates.getRUB();
+                UAH mUah = rates.getUAH();
+                RON mRon = rates.getRON();
+                GBP mGbp = rates.getGBP();
 
-            TextView currentTextView = null;
+                Double eur = (mEur == null ? 0 : mEur.getBuy());
+                Double usd = (mUsd == null ? 0 : mUsd.getBuy());
+                Double rub = (mRub == null ? 0 : mRub.getBuy());
+                Double uah = (mUah == null ? 0 : mUah.getBuy());
+                Double ron = (mRon == null ? 0 : mRon.getBuy());
+                Double gbp = (mGbp == null ? 0 : mGbp.getBuy());
 
-            if (this.currentCurrency == "EUR") {
-                currentTextView = edit_eur;
-                currency_rate = eur;
-            } else if (this.currentCurrency == "USD") {
-                currentTextView = edit_usd;
-                currency_rate = usd;
-            } else if (this.currentCurrency == "RUB") {
-                currentTextView = edit_rub;
-                currency_rate = rub;
-            } else if (this.currentCurrency == "UAH") {
-                currentTextView = edit_uah;
-                currency_rate = uah;
-            } else if (this.currentCurrency == "RON") {
-                currentTextView = edit_ron;
-                currency_rate = ron;
-            }
+                TextView currentTextView = null;
 
-            if (currentTextView.isFocused()) {
-                String currentField = currentTextView.getText().toString();
+                if (this.currentCurrency == "EUR") {
+                    currentTextView = edit_eur;
+                    currency_rate = eur;
+                } else if (this.currentCurrency == "USD") {
+                    currentTextView = edit_usd;
+                    currency_rate = usd;
+                } else if (this.currentCurrency == "RUB") {
+                    currentTextView = edit_rub;
+                    currency_rate = rub;
+                } else if (this.currentCurrency == "UAH") {
+                    currentTextView = edit_uah;
+                    currency_rate = uah;
+                } else if (this.currentCurrency == "RON") {
+                    currentTextView = edit_ron;
+                    currency_rate = ron;
+                } else if (this.currentCurrency == "GBP") {
+                    currentTextView = edit_gbp;
+                    currency_rate = gbp;
+                }
 
-                if (currentField.length() > 0) {
-                    Double currency_calc = Double.parseDouble(currentField);
+                if (currentTextView.isFocused()) {
+                    String currentField = currentTextView.getText().toString();
 
-                    if (this.currentCurrency != "EUR") {
-                        eur_calc = (currency_calc * currency_rate / eur);
-                        edit_eur.setText(String.format("%.02f", eur_calc));
-                    }
+                    if (currentField.length() > 0) {
+                        Double currency_calc = Double.parseDouble(currentField);
 
-                    if (this.currentCurrency != "USD") {
-                        usd_calc = (currency_calc * currency_rate / usd);
-                        edit_usd.setText(String.format("%.02f", usd_calc));
-                    }
+                        if (this.currentCurrency != "EUR" && eur != 0) {
+                            eur_calc = (currency_calc * currency_rate / eur);
+                            edit_eur.setText(String.format("%.02f", eur_calc));
+                        }
 
-                    if (this.currentCurrency != "RUB") {
-                        rub_calc = (currency_calc * currency_rate / rub);
-                        edit_rub.setText(String.format("%.02f", rub_calc));
-                    }
+                        if (this.currentCurrency != "USD" && usd != 0) {
+                            usd_calc = (currency_calc * currency_rate / usd);
+                            edit_usd.setText(String.format("%.02f", usd_calc));
+                        }
 
-                    if (this.currentCurrency != "UAH") {
-                        uah_calc = (currency_calc * currency_rate / uah);
-                        edit_uah.setText(String.format("%.02f", uah_calc));
-                    }
+                        if (this.currentCurrency != "RUB" && rub != 0) {
+                            rub_calc = (currency_calc * currency_rate / rub);
+                            edit_rub.setText(String.format("%.02f", rub_calc));
+                        }
 
-                    if (this.currentCurrency != "RON") {
-                        ron_calc = (currency_calc * currency_rate / ron);
-                        edit_ron.setText(String.format("%.02f", ron_calc));
+                        if (this.currentCurrency != "UAH" && uah != 0) {
+                            uah_calc = (currency_calc * currency_rate / uah);
+                            edit_uah.setText(String.format("%.02f", uah_calc));
+                        }
+
+                        if (this.currentCurrency != "RON" && ron != 0) {
+                            ron_calc = (currency_calc * currency_rate / ron);
+                            edit_ron.setText(String.format("%.02f", ron_calc));
+                        }
+
+                        if (this.currentCurrency != "GBP" && gbp != 0) {
+                            gbp_calc = (currency_calc * currency_rate / gbp);
+                            edit_gbp.setText(String.format("%.02f", gbp_calc));
+                        }
                     }
                 }
+            } catch (NumberFormatException e) {
+                Log.e("NumberFormatException", e.getMessage());
+            } catch (NullPointerException e) {
+                Log.e("NullPointerException", e.getMessage());
             }
         }
     }
