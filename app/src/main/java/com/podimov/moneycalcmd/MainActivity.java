@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText edit_ron;
     private EditText edit_gbp;
 
+    private TextView app_title;
+
     private LinearLayout linearLayoutEur;
     private LinearLayout linearLayoutUsd;
     private LinearLayout linearLayoutRub;
@@ -96,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         currentDate = sdf.format(new Date());
-        TextView app_title = (TextView) findViewById(R.id.app_title);
-        app_title.setText(getString(R.string.app_title, currentDate));
 
         linearLayoutEur = (LinearLayout) findViewById(R.id.linearLayoutEur);
         linearLayoutUsd = (LinearLayout) findViewById(R.id.linearLayoutUsd);
@@ -115,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
         if (bankModel != null) {
             ratesDate = sdf.format(new Date(bankModel.getDate() * 1000L));
         }
+
+        app_title = (TextView) findViewById(R.id.app_title);
+        app_title.setText(getString(R.string.app_title, (ratesDate != null ? ratesDate : currentDate)));
 
         try {
             if (bankModel == null || !Objects.equals(ratesDate, currentDate)) {
