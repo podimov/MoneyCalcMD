@@ -1,16 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Money MD</string>
-    <string name="app_title">Курс валют на %1$s</string>
-    <string name="currency">Валюта</string>
-    <string name="buy">Покупка</string>
-    <string name="sell">Продажа</string>
-    <string name="eur">EUR</string>
-    <string name="usd">USD</string>
-    <string name="rub">RUB</string>
-    <string name="uah">UAH</string>
-    <string name="ron">RON</string>
-    <string name="exchange">Обмен</string>
-    <string name="gbp">GBP</string>
-    <string name="mdl">MDL</string>
-    <string name="dash">-</string>
+    <string name="app_name" translatable="false">Money MD</string>
+    <string name="app_title">Exchange rate for %1$s</string>
+    <string name="currency">Currency</string>
+    <string name="buy">Buy</string>
+    <string name="sell">Sell</string>
+    <string name="exchange">Exchange</string>
+    <string name="eur" translatable="false">EUR</string>
+    <string name="usd" translatable="false">USD</string>
+    <string name="rub" translatable="false">RUB</string>
+    <string name="uah" translatable="false">UAH</string>
+    <string name="ron" translatable="false">RON</string>
+    <string name="gbp" translatable="false">GBP</string>
+    <string name="mdl" translatable="false">MDL</string>
+    <string name="dash" translatable="false">-</string>
 </resources>
