@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView gbp_buy;
     private TextView gbp_sell;
 
+    private EditText edit_mdl;
     private EditText edit_eur;
     private EditText edit_usd;
     private EditText edit_rub;
@@ -183,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
         gbp_buy = (TextView) findViewById(R.id.gbp_buy);
         gbp_sell = (TextView) findViewById(R.id.gbp_sell);
 
+        edit_mdl = (EditText) findViewById(R.id.edit_mdl);
         edit_eur = (EditText) findViewById(R.id.edit_eur);
         edit_usd = (EditText) findViewById(R.id.edit_usd);
         edit_rub = (EditText) findViewById(R.id.edit_rub);
@@ -252,15 +254,17 @@ public class MainActivity extends AppCompatActivity {
                     gbp_sell.setText(String.format("%.02f", rates.getGBP().getSell()));
                 } catch (Exception e) {}
 
-                edit_eur.setText("100");
-                edit_eur.requestFocus();
-                edit_eur.selectAll();
+                edit_mdl.setText("1000");
+                edit_mdl.requestFocus();
+                edit_mdl.selectAll();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(edit_eur, InputMethodManager.SHOW_IMPLICIT);
+                imm.showSoftInput(edit_mdl, InputMethodManager.SHOW_IMPLICIT);
 
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+        edit_mdl.addTextChangedListener(new MyTextWatcher("MDL"));
 
         edit_eur.addTextChangedListener(new MyTextWatcher("EUR"));
 
@@ -294,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
         public void afterTextChanged(Editable s) {
             Double currency_rate = null;
 
+            Double mdl_calc;
             Double eur_calc;
             Double usd_calc;
             Double rub_calc;
@@ -311,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
                 RON mRon = rates.getRON();
                 GBP mGbp = rates.getGBP();
 
+                Double mdl = 1.0;
                 Double eur = (mEur == null ? 0 : mEur.getBuy());
                 Double usd = (mUsd == null ? 0 : mUsd.getBuy());
                 Double rub = (mRub == null ? 0 : mRub.getBuy());
@@ -320,7 +326,10 @@ public class MainActivity extends AppCompatActivity {
 
                 TextView currentTextView = null;
 
-                if (Objects.equals(this.currentCurrency, "EUR")) {
+                if (Objects.equals(this.currentCurrency, "MDL")) {
+                    currentTextView = edit_mdl;
+                    currency_rate = mdl;
+                } else if (Objects.equals(this.currentCurrency, "EUR")) {
                     currentTextView = edit_eur;
                     currency_rate = eur;
                 } else if (Objects.equals(this.currentCurrency, "USD")) {
@@ -346,6 +355,11 @@ public class MainActivity extends AppCompatActivity {
                     if (currentField.length() > 0) {
                         Double currency_calc = Double.parseDouble(currentField);
 
+                        if (!Objects.equals(this.currentCurrency, "MDL")) {
+                            mdl_calc = (currency_calc * currency_rate / mdl);
+                            edit_mdl.setText(String.format("%.02f", mdl_calc));
+                        }
+
                         if (!Objects.equals(this.currentCurrency, "EUR") && eur != 0) {
                             eur_calc = (currency_calc * currency_rate / eur);
                             edit_eur.setText(String.format("%.02f", eur_calc));
@@ -366,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
                             edit_uah.setText(String.format("%.02f", uah_calc));
                         }
 
-                        if (this.currentCurrency != "RON" && ron != 0) {
+                        if (!Objects.equals(this.currentCurrency, "RON") && ron != 0) {
                             ron_calc = (currency_calc * currency_rate / ron);
                             edit_ron.setText(String.format("%.02f", ron_calc));
                         }
