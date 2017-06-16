@@ -121,9 +121,6 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             if (bankModel == null || !Objects.equals(ratesDate, currentDate)) {
-                Log.e("Rates date", "from "+ratesDate);
-                Log.e("Current date", "from "+currentDate);
-                Log.e("SOURCE", "Rates from network");
                 new Api().get().getData().enqueue(new Callback<BankModel>() {
                     @Override
                     public void onResponse(Call<BankModel> call, Response<BankModel> response) {
@@ -151,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                Log.e("SOURCE", "Local rates");
                 Organizations organizations = bankModel.getOrganizations();
 
                 for (Integer i = 0; i <= 9; i++) {
