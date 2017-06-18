@@ -204,65 +204,67 @@ public class MainActivity extends AppCompatActivity {
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 selectedBank = selectedItemPosition;
 
-                Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
+                if (bankModel.getOrganizations().getBank(selectedItemPosition) != null) {
+                    Rates rates = bankModel.getOrganizations().getBank(selectedItemPosition).getRates();
 
-                if (rates.getEUR() == null) {
-                    linearLayoutEur.setVisibility(LinearLayout.GONE);
-                } else {
-                    linearLayoutEur.setVisibility(LinearLayout.VISIBLE);
+                    if (rates.getEUR() == null) {
+                        linearLayoutEur.setVisibility(LinearLayout.GONE);
+                    } else {
+                        linearLayoutEur.setVisibility(LinearLayout.VISIBLE);
+                    }
+
+                    if (rates.getUSD() == null) {
+                        linearLayoutUsd.setVisibility(LinearLayout.GONE);
+                    } else {
+                        linearLayoutUsd.setVisibility(LinearLayout.VISIBLE);
+                    }
+
+                    if (rates.getRUB() == null) {
+                        linearLayoutRub.setVisibility(LinearLayout.GONE);
+                    } else {
+                        linearLayoutRub.setVisibility(LinearLayout.VISIBLE);
+                    }
+
+                    if (rates.getUAH() == null) {
+                        linearLayoutUah.setVisibility(LinearLayout.GONE);
+                    } else {
+                        linearLayoutUah.setVisibility(LinearLayout.VISIBLE);
+                    }
+
+                    if (rates.getRON() == null) {
+                        linearLayoutRon.setVisibility(LinearLayout.GONE);
+                    } else {
+                        linearLayoutRon.setVisibility(LinearLayout.VISIBLE);
+                    }
+
+                    if (rates.getGBP() == null) {
+                        linearLayoutGbp.setVisibility(LinearLayout.GONE);
+                    } else {
+                        linearLayoutGbp.setVisibility(LinearLayout.VISIBLE);
+                    }
+
+                    try {
+                        eur_buy.setText(String.format("%.02f", rates.getEUR().getBuy()));
+                        eur_sell.setText(String.format("%.02f", rates.getEUR().getSell()));
+                        usd_buy.setText(String.format("%.02f", rates.getUSD().getBuy()));
+                        usd_sell.setText(String.format("%.02f", rates.getUSD().getSell()));
+                        rub_buy.setText(String.format("%.02f", rates.getRUB().getBuy()));
+                        rub_sell.setText(String.format("%.02f", rates.getRUB().getSell()));
+                        uah_buy.setText(String.format("%.02f", rates.getUAH().getBuy()));
+                        uah_sell.setText(String.format("%.02f", rates.getUAH().getSell()));
+                        ron_buy.setText(String.format("%.02f", rates.getRON().getBuy()));
+                        ron_sell.setText(String.format("%.02f", rates.getRON().getSell()));
+                        gbp_buy.setText(String.format("%.02f", rates.getGBP().getBuy()));
+                        gbp_sell.setText(String.format("%.02f", rates.getGBP().getSell()));
+                    } catch (Exception e) {
+                    }
+
+                    edit_mdl.setText("1000");
+                    edit_mdl.requestFocus();
+                    edit_mdl.selectAll();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(edit_mdl, InputMethodManager.SHOW_IMPLICIT);
                 }
-
-                if (rates.getUSD() == null) {
-                    linearLayoutUsd.setVisibility(LinearLayout.GONE);
-                } else {
-                    linearLayoutUsd.setVisibility(LinearLayout.VISIBLE);
-                }
-
-                if (rates.getRUB() == null) {
-                    linearLayoutRub.setVisibility(LinearLayout.GONE);
-                } else {
-                    linearLayoutRub.setVisibility(LinearLayout.VISIBLE);
-                }
-
-                if (rates.getUAH() == null) {
-                    linearLayoutUah.setVisibility(LinearLayout.GONE);
-                } else {
-                    linearLayoutUah.setVisibility(LinearLayout.VISIBLE);
-                }
-
-                if (rates.getRON() == null) {
-                    linearLayoutRon.setVisibility(LinearLayout.GONE);
-                } else {
-                    linearLayoutRon.setVisibility(LinearLayout.VISIBLE);
-                }
-
-                if (rates.getGBP() == null) {
-                    linearLayoutGbp.setVisibility(LinearLayout.GONE);
-                } else {
-                    linearLayoutGbp.setVisibility(LinearLayout.VISIBLE);
-                }
-
-                try {
-                    eur_buy.setText(String.format("%.02f", rates.getEUR().getBuy()));
-                    eur_sell.setText(String.format("%.02f", rates.getEUR().getSell()));
-                    usd_buy.setText(String.format("%.02f", rates.getUSD().getBuy()));
-                    usd_sell.setText(String.format("%.02f", rates.getUSD().getSell()));
-                    rub_buy.setText(String.format("%.02f", rates.getRUB().getBuy()));
-                    rub_sell.setText(String.format("%.02f", rates.getRUB().getSell()));
-                    uah_buy.setText(String.format("%.02f", rates.getUAH().getBuy()));
-                    uah_sell.setText(String.format("%.02f", rates.getUAH().getSell()));
-                    ron_buy.setText(String.format("%.02f", rates.getRON().getBuy()));
-                    ron_sell.setText(String.format("%.02f", rates.getRON().getSell()));
-                    gbp_buy.setText(String.format("%.02f", rates.getGBP().getBuy()));
-                    gbp_sell.setText(String.format("%.02f", rates.getGBP().getSell()));
-                } catch (Exception e) {}
-
-                edit_mdl.setText("1000");
-                edit_mdl.requestFocus();
-                edit_mdl.selectAll();
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(edit_mdl, InputMethodManager.SHOW_IMPLICIT);
-
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
