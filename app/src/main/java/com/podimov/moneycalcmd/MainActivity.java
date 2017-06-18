@@ -110,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
         mPrefs = getPreferences(MODE_PRIVATE);
         String json = mPrefs.getString("bankModel", "");
-        bankModel = gson.fromJson(json, BankModel.class);
+        if (!Objects.equals(json, "")) {
+            bankModel = gson.fromJson(json, BankModel.class);
+        }
 
         if (bankModel != null) {
             ratesDate = sdf.format(new Date(bankModel.getDate() * 1000L));
@@ -135,7 +137,9 @@ public class MainActivity extends AppCompatActivity {
                             Organizations organizations = bankModel.getOrganizations();
 
                             for (Integer i = 0; i <= 9; i++) {
-                                banks.add(organizations.getBank(i).getName());
+                                if (organizations.getBank(i) != null) {
+                                    banks.add(organizations.getBank(i).getName());
+                                }
                             }
 
                             adapter.notifyDataSetChanged();
